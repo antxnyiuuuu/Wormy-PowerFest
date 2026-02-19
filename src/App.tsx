@@ -32,7 +32,7 @@ export function App() {
                 alt="Warmi PowerFest Logo" 
                 className="h-12 w-auto object-contain"
               />
-              <span className="text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-magenta to-violet">
+              <span className="hidden md:inline text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-magenta to-violet">
                 WARMI<span className="text-gray-900">POWERFEST</span>
               </span>
             </div>

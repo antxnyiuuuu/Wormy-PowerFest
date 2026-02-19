@@ -60,6 +60,24 @@ const AVAILABLE_SPORTS: Sport[] = [
     color: 'border-l-yellow'
   },
   {
+    id: 'baile',
+    label: 'Baile',
+    emoji: '💃',
+    color: 'border-l-red'
+  },
+  {
+    id: 'futbol',
+    label: 'Futbol',
+    emoji: '⚽',
+    color: 'border-l-blue'
+  },
+  {
+    id: 'basket',
+    label: 'Basket',
+    emoji: '🏀',
+    color: 'border-l-orange'
+  },
+  {
     id: 'ninguno',
     label: 'Ninguno',
     emoji: '❌',
@@ -154,7 +172,7 @@ export function RegistrationPage() {
     try {
       // Call backend to send WhatsApp
       const response = await registrationService.sendWhatsApp(ticketData.id, whatsappPhone);
-      
+
       if (response.success) {
         alert('✅ QR enviado por WhatsApp exitosamente');
         setShowWhatsAppModal(false);
@@ -191,7 +209,7 @@ export function RegistrationPage() {
     try {
       // Call backend to send to alternative email
       const response = await registrationService.sendAltEmail(ticketData.id, altEmail);
-      
+
       if (response.success) {
         alert('✅ QR enviado al correo alternativo exitosamente');
         setShowAltEmailModal(false);
@@ -437,13 +455,25 @@ export function RegistrationPage() {
       const sourceItems = Array.from(availableSports);
       const destItems = Array.from(selectedSports);
       const [movedItem] = sourceItems.splice(source.index, 1);
+      
       // Logic for "Ninguno"
       if (movedItem.id === 'ninguno') {
+        // Block "Ninguno" if there are already sports selected
+        if (destItems.length > 0) {
+          // Return the item to available sports without selecting it
+          return;
+        }
         // If "Ninguno" is selected, clear all other selections and move them back to available
         const allSelected = [...destItems];
         setAvailableSports([...sourceItems, ...allSelected]);
         setSelectedSports([movedItem]);
       } else {
+        // Check if limit of 3 sports is reached
+        if (destItems.length >= 3) {
+          // Return the item to available sports without selecting it
+          return;
+        }
+        
         // If a sport is selected, remove "Ninguno" from selected if present
         const noneIndex = destItems.findIndex((item) => item.id === 'ninguno');
         if (noneIndex > -1) {
@@ -784,8 +814,13 @@ export function RegistrationPage() {
                 ¿Cuáles son tus deportes favoritos?
               </h1>
               <p className="text-lg text-gray-600">
-                Arrastra los deportes que te gustan al área de selección
+                Arrastra los deportes que te gustan al área de selección (máximo 3)
               </p>
+              {selectedSports.length > 0 && selectedSports[0].id !== 'ninguno' && (
+                <p className="text-sm text-magenta font-medium mt-2">
+                  {selectedSports.length}/3 deportes seleccionados
+                </p>
+              )}
             </div>
 
             <DragDropContext onDragEnd={onDragEnd}>
@@ -805,33 +840,51 @@ export function RegistrationPage() {
                           ${snapshot.isDraggingOver ? 'border-magenta bg-magenta/5' : 'border-gray-200 bg-gray-50'}
                         `}>
 
-                        {availableSports.map((sport, index) =>
-                          <Draggable
-                            key={sport.id}
-                            draggableId={sport.id}
-                            index={index}>
+                        {availableSports.map((sport, index) => {
+                          // Disable "Ninguno" if there are sports selected
+                          const isNingunoDisabled = sport.id === 'ninguno' && selectedSports.length > 0;
+                          // Disable all sports if 3 are already selected (except "Ninguno")
+                          const isLimitReached = selectedSports.length >= 3 && sport.id !== 'ninguno';
+                          const isDisabled = isNingunoDisabled || isLimitReached;
+                          
+                          return (
+                            <Draggable
+                              key={sport.id}
+                              draggableId={sport.id}
+                              index={index}
+                              isDragDisabled={isDisabled}>
 
-                            {(provided, snapshot) =>
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className={`
-                                  bg-white p-4 mb-3 rounded-xl shadow-sm border-l-4 ${sport.color}
-                                  flex items-center gap-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-all
-                                  ${snapshot.isDragging ? 'scale-105 shadow-xl rotate-2 z-50' : ''}
-                                `}
-                                style={provided.draggableProps.style}>
+                              {(provided, snapshot) =>
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className={`
+                                    bg-white p-4 mb-3 rounded-xl shadow-sm border-l-4 ${sport.color}
+                                    flex items-center gap-3 transition-all
+                                    ${isDisabled 
+                                      ? 'opacity-40 cursor-not-allowed' 
+                                      : 'cursor-grab active:cursor-grabbing hover:shadow-md'
+                                    }
+                                    ${snapshot.isDragging ? 'scale-105 shadow-xl rotate-2 z-50' : ''}
+                                  `}
+                                  style={provided.draggableProps.style}>
 
-                                <span className="text-2xl">{sport.emoji}</span>
-                                <span className="font-bold text-gray-800">
-                                  {sport.label}
-                                </span>
-                                <GripVertical className="ml-auto text-gray-300 w-5 h-5" />
-                              </div>
-                            }
-                          </Draggable>
-                        )}
+                                  <span className="text-2xl">{sport.emoji}</span>
+                                  <span className="font-bold text-gray-800">
+                                    {sport.label}
+                                  </span>
+                                  {isDisabled && (
+                                    <span className="ml-auto text-xs text-gray-400 font-medium">
+                                      {isNingunoDisabled ? 'Bloqueado' : 'Límite alcanzado'}
+                                    </span>
+                                  )}
+                                  {!isDisabled && <GripVertical className="ml-auto text-gray-300 w-5 h-5" />}
+                                </div>
+                              }
+                            </Draggable>
+                          );
+                        })}
                         {provided.placeholder}
                       </div>
                     }
@@ -1092,7 +1145,7 @@ export function RegistrationPage() {
                           <Phone className="w-4 h-4" />
                           Enviar por WhatsApp
                         </button>
-                        
+
                         <button
                           onClick={handleOpenAltEmailModal}
                           className="text-sm font-medium text-magenta hover:text-magenta/80 underline transition-colors flex items-center gap-1"
