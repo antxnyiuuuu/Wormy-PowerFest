@@ -7,14 +7,14 @@ export const API_CONFIG = {
 // API Endpoints
 export const API_ENDPOINTS = {
   // Registrations
-  REGISTER: '/registrations',
-  GET_REGISTRATIONS: '/registrations',
-  GET_REGISTRATION_BY_ID: (id: string) => `/registrations/${id}`,
+  REGISTER: '/api/registrations',
+  GET_REGISTRATIONS: '/api/registrations',
+  GET_REGISTRATION_BY_ID: (id: string) => `/api/registrations/${id}`,
   
   // Verification
-  VERIFY_TICKET: '/verify',
-  CHECK_IN: (id: string) => `/registrations/${id}/check-in`,
+  VERIFY_TICKET: '/api/verify',
+  CHECK_IN: (id: string) => `/api/registrations/${id}/check-in`,
   
   // Stats
-  GET_STATS: '/stats',
+  GET_STATS: '/api/stats',
 } as const;
