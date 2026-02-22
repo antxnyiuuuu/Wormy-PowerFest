@@ -1231,6 +1231,15 @@ export function RegistrationPage() {
                 </div>
               )}
 
+              {/* Additional help for duplicate cedula */}
+              {errorMessage.toLowerCase().includes('cédula') && errorMessage.toLowerCase().includes('registrada') && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-blue-800">
+                    <strong>¿Ya te registraste antes?</strong> Usa la opción "Reenviar QR" en el menú superior para recuperar tu código de acceso.
+                  </p>
+                </div>
+              )}
+
               {/* Action button */}
               <div className="flex justify-end">
                 <FestivalButton

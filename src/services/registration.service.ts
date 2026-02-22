@@ -143,4 +143,15 @@ export const registrationService = {
       { email }
     );
   },
+
+  /**
+   * Search registration by cedula
+   */
+  async searchByCedula(
+    cedula: string
+  ): Promise<ApiResponse<RegistrationResponse>> {
+    return apiService.get<RegistrationResponse>(
+      `${API_ENDPOINTS.SEARCH_BY_CEDULA}?cedula=${cedula}`
+    );
+  },
 };

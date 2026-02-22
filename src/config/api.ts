@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   REGISTER: '/api/registrations',
   GET_REGISTRATIONS: '/api/registrations',
   GET_REGISTRATION_BY_ID: (id: string) => `/api/registrations/${id}`,
+  SEARCH_BY_CEDULA: '/api/registrations/search',
   
   // Verification
   VERIFY_TICKET: '/api/verify',

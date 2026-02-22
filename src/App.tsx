@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, BarChart3 } from 'lucide-react';
+import { Ticket, RotateCcw } from 'lucide-react';
 import { RegistrationPage } from './pages/RegistrationPage';
-import { AdminDashboard } from './pages/AdminDashboard';
+import { ResendQRPage } from './pages/ResendQRPage';
 import { Footer } from './components/ui/Footer';
 import logoHeader from './assets/logos/logo-header.jpeg';
-type View = 'register' | 'dashboard';
+type View = 'register' | 'resend';
 export function App() {
   const [activeView, setActiveView] = useState<View>('register');
   const tabs = [
@@ -14,11 +14,11 @@ export function App() {
     label: 'Registro',
     icon: Ticket
   },
-  //{
-    //id: 'dashboard',
-    //label: 'Panel',
-    //icon: BarChart3
-  //}
+  {
+    id: 'resend',
+    label: 'Reenviar QR',
+    icon: RotateCcw
+  }
 ];
 
   return (
@@ -97,7 +97,7 @@ export function App() {
             className="w-full">
 
             {activeView === 'register' && <RegistrationPage />}
-            {activeView === 'dashboard' && <AdminDashboard />}
+            {activeView === 'resend' && <ResendQRPage />}
           </motion.div>
         </AnimatePresence>
       </main>
