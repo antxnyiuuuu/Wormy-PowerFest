@@ -27,9 +27,10 @@ import {
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
-  Dumbbell
-} from
-  'lucide-react';
+  Dumbbell,
+  AlertCircle,
+  X
+} from 'lucide-react';
 // Sport type definition
 type Sport = {
   id: string;
@@ -330,9 +331,18 @@ export function RegistrationPage() {
 
     // Validate email (username + domain)
     const fullEmail = formData.emailUsername + formData.emailDomain;
+    console.log('Validating email - username:', formData.emailUsername, 'domain:', formData.emailDomain, 'full:', fullEmail);
+    
+    // Verificar que el username no esté vacío
     if (!formData.emailUsername.trim()) {
       newErrors.email = ERROR_MESSAGES.EMAIL_REQUIRED;
-    } else if (!validateEmail(fullEmail)) {
+    } 
+    // Verificar que el domain no esté vacío
+    else if (!formData.emailDomain.trim()) {
+      newErrors.email = ERROR_MESSAGES.EMAIL_REQUIRED;
+    }
+    // Validar el formato del email completo
+    else if (!validateEmail(fullEmail)) {
       newErrors.email = ERROR_MESSAGES.EMAIL_INVALID;
     }
 
@@ -413,6 +423,10 @@ export function RegistrationPage() {
       }
     }
   };
+  // Error modal state
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   // Handle form submission
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -469,7 +483,9 @@ export function RegistrationPage() {
       setTimeout(() => setShowEmailSent(true), 1000);
     } catch (error) {
       console.error('Error al registrar:', error);
-      alert('Error al crear el registro. Por favor, intenta de nuevo.');
+      const errorMsg = error instanceof Error ? error.message : 'Error al crear el registro. Por favor, intenta de nuevo.';
+      setErrorMessage(errorMsg);
+      setShowErrorModal(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -616,13 +632,13 @@ export function RegistrationPage() {
                   username={formData.emailUsername}
                   domain={formData.emailDomain}
                   onUsernameChange={(value) => {
-                    setFormData({ ...formData, emailUsername: value });
+                    setFormData(prev => ({ ...prev, emailUsername: value }));
                     if (errors.email) {
                       setErrors({ ...errors, email: '' });
                     }
                   }}
                   onDomainChange={(value) => {
-                    setFormData({ ...formData, emailDomain: value });
+                    setFormData(prev => ({ ...prev, emailDomain: value }));
                     if (errors.email) {
                       setErrors({ ...errors, email: '' });
                     }
@@ -1159,6 +1175,69 @@ export function RegistrationPage() {
                   fullWidth
                 >
                   {isSendingAltEmail ? 'Enviando...' : 'Enviar QR'}
+                </FestivalButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error Modal */}
+      <AnimatePresence>
+        {showErrorModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowErrorModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Icon and Title */}
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-extrabold text-gray-900 mb-2">
+                    ¡Ups! Algo salió mal
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {errorMessage}
+                  </p>
+                </div>
+              </div>
+
+              {/* Additional help for duplicate email */}
+              {errorMessage.toLowerCase().includes('email') && errorMessage.toLowerCase().includes('registrado') && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-blue-800">
+                    <strong>¿Ya te registraste antes?</strong> Revisa tu correo electrónico para encontrar tu código QR de acceso.
+                  </p>
+                </div>
+              )}
+
+              {/* Action button */}
+              <div className="flex justify-end">
+                <FestivalButton
+                  onClick={() => setShowErrorModal(false)}
+                  fullWidth
+                >
+                  Entendido
                 </FestivalButton>
               </div>
             </motion.div>
