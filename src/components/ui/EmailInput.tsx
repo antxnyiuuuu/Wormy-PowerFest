@@ -37,8 +37,8 @@ export function EmailInput({
   required = false,
 }: EmailInputProps) {
   const inputClasses = `
-    flex-1 pl-10 pr-4 py-3 rounded-l-xl border-2 border-r-0 border-gray-200 
-    bg-gray-50 text-gray-900 font-medium
+    flex-1 min-w-0 pl-10 pr-2 py-3 rounded-l-xl border-2 border-r-0 border-gray-200 
+    bg-gray-50 text-gray-900 font-medium text-sm
     focus:border-magenta focus:ring-0 focus:bg-white focus:z-10
     transition-all duration-300 outline-none
     placeholder:text-gray-400
@@ -46,10 +46,11 @@ export function EmailInput({
   `;
 
   const selectClasses = `
-    px-4 py-3 rounded-r-xl border-2 border-l-0 border-gray-200 
-    bg-gray-50 text-gray-900 font-medium
+    px-2 py-3 rounded-r-xl border-2 border-l-0 border-gray-200 
+    bg-gray-50 text-gray-900 font-medium text-sm
     focus:border-magenta focus:ring-0 focus:bg-white focus:z-10
     transition-all duration-300 outline-none cursor-pointer
+    max-w-[140px] flex-shrink-0
     ${error ? 'border-red-500 focus:border-red-500' : ''}
   `;
 
@@ -61,7 +62,7 @@ export function EmailInput({
       </label>
 
       <div className="relative">
-        <div className="flex items-center">
+        <div className="flex items-center w-full overflow-hidden">
           <motion.input
             type="text"
             value={username}
@@ -87,7 +88,7 @@ export function EmailInput({
           </motion.select>
         </div>
 
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
           <Mail className="w-5 h-5 text-gray-400" />
         </div>
       </div>
